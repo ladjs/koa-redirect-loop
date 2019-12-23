@@ -1,0 +1,132 @@
+{
+  "name": "koa-redirect-loop",
+  "description": "Prevent redirect loops with sessions since HTTP referrer header is unreliable",
+  "version": "0.0.0",
+  "author": "Nick Baugh <niftylettuce@gmail.com> (http://niftylettuce.com/)",
+  "ava": {
+    "serial": true,
+    "failFast": true,
+    "verbose": true
+  },
+  "bugs": {
+    "url": "https://github.com/niftylettuce/koa-redirect-loop/issues",
+    "email": "niftylettuce@gmail.com"
+  },
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
+  },
+  "contributors": [
+    "Nick Baugh <niftylettuce@gmail.com> (http://niftylettuce.com/)"
+  ],
+  "dependencies": {
+    "is-string-and-not-blank": "^0.0.2",
+    "url-parse": "^1.4.7"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "latest",
+    "@commitlint/config-conventional": "latest",
+    "@koa/router": "^8.0.5",
+    "ava": "latest",
+    "cabin": "^5.0.13",
+    "codecov": "latest",
+    "cross-env": "latest",
+    "eslint": "latest",
+    "eslint-config-xo-lass": "latest",
+    "fetch-cookie": "^0.7.3",
+    "fixpack": "latest",
+    "husky": "latest",
+    "koa": "^2.11.0",
+    "koa-better-error-handler": "^3.0.3",
+    "koa-generic-session": "^2.0.3",
+    "lint-staged": "latest",
+    "node-fetch": "^2.6.0",
+    "nyc": "latest",
+    "remark-cli": "latest",
+    "remark-preset-github": "latest",
+    "xo": "latest"
+  },
+  "engines": {
+    "node": ">=8.3"
+  },
+  "homepage": "https://github.com/niftylettuce/koa-redirect-loop",
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged && npm test",
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+    }
+  },
+  "keywords": [
+    "back",
+    "bug",
+    "connect",
+    "endless",
+    "express",
+    "fix",
+    "header",
+    "helper",
+    "hotfix",
+    "http",
+    "koa",
+    "loop",
+    "middleware",
+    "patch",
+    "plugin",
+    "prevent",
+    "prevention",
+    "recursive",
+    "redirect",
+    "redirecting",
+    "redirection",
+    "referer",
+    "referrer",
+    "route",
+    "session"
+  ],
+  "license": "MIT",
+  "lint-staged": {
+    "*.js": [
+      "xo --fix",
+      "git add"
+    ],
+    "*.md": [
+      "remark . -qfo",
+      "git add"
+    ],
+    "package.json": [
+      "fixpack",
+      "git add"
+    ]
+  },
+  "main": "index.js",
+  "prettier": {
+    "singleQuote": true,
+    "bracketSpacing": true,
+    "trailingComma": "none"
+  },
+  "remarkConfig": {
+    "plugins": [
+      "preset-github"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/niftylettuce/koa-redirect-loop"
+  },
+  "scripts": {
+    "ava": "cross-env NODE_ENV=test ava",
+    "coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
+    "lint": "xo && remark . -qfo",
+    "nyc": "cross-env NODE_ENV=test nyc ava",
+    "test": "npm run lint && npm run ava",
+    "test-coverage": "npm run lint && npm run nyc"
+  },
+  "xo": {
+    "prettier": true,
+    "space": true,
+    "extends": [
+      "xo-lass"
+    ]
+  }
+}
