@@ -17,7 +17,7 @@ test.beforeEach((t) => {
   const app = new Koa();
   app.keys = ['some secret'];
   // override koa's undocumented error handler
-  app.context.onerror = errorHandler({ cookiesKey });
+  app.context.onerror = errorHandler(cookiesKey);
   const router = new Router();
   app.keys = ['lad'];
   app.use(

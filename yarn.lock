@@ -4046,10 +4046,10 @@ kind-of@^6.0.0, kind-of@^6.0.2, kind-of@^6.0.3:
   resolved "https://registry.yarnpkg.com/kind-of/-/kind-of-6.0.3.tgz#07c05034a6c349fa06e24fa35aa76db4580ce4dd"
   integrity sha512-dcS1ul+9tmeD95T+x28/ehLgd9mENa3LsvDTtzm3vyBEO7RPptvAD+t44WVXaUjTBRcrpFeFlC8WCruUR456hw==
 
-koa-better-error-handler@^6.0.0:
-  version "6.0.0"
-  resolved "https://registry.yarnpkg.com/koa-better-error-handler/-/koa-better-error-handler-6.0.0.tgz#2677ac2ebb45229f3b8ccf78fdc8b18f1b307c50"
-  integrity sha512-yyPVPjGBiIYaA8P3UXihAUZ+DhYKdEbEcoJD7QLkktphsFMlGiMla0fJxTubZjupNx6CRh/w6YbQLiA77m2dAw==
+koa-better-error-handler@^6.0.1:
+  version "6.0.1"
+  resolved "https://registry.yarnpkg.com/koa-better-error-handler/-/koa-better-error-handler-6.0.1.tgz#43aaf3af9254f4d8892a44a701cfbe5cb34557e7"
+  integrity sha512-lZBwts9HJ5VS+//zySfLTsDwgEtW5W36Z82t3O9y6NDIWbLzT56Tvep3gSQ6LEZT5EDB4Lc7+2usN1BSL3O4lw==
   dependencies:
     "@hapi/boom" "^9.1.0"
     camelcase "^6.0.0"

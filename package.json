@@ -39,7 +39,7 @@
     "fixpack": "latest",
     "husky": "latest",
     "koa": "^2.13.0",
-    "koa-better-error-handler": "^6.0.0",
+    "koa-better-error-handler": "^6.0.1",
     "koa-generic-session": "^2.0.4",
     "lint-staged": "latest",
     "node-fetch": "^2.6.0",
