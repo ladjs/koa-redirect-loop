@@ -32,7 +32,7 @@ class RedirectLoop {
     const { redirect } = ctx;
     const { end } = ctx.res;
 
-    ctx.res.end = function(chunk, encoding) {
+    ctx.res.end = function (chunk, encoding) {
       // instead of `!req.xhr` we need to use !accepts HTML
       // because Fetch does not provide XMLHttpRequest
       if (ctx.accepts('html')) {
@@ -49,7 +49,7 @@ class RedirectLoop {
         else ctx.session.maxRedirects = 0;
       }
 
-      callbackify(ctx.saveSession)(err => {
+      callbackify(ctx.saveSession)((err) => {
         if (err) {
           if (ctx.logger && ctx.logger.error) ctx.logger.error(err);
           else config.logger.error(err);
@@ -59,28 +59,33 @@ class RedirectLoop {
       });
     };
 
-    ctx.redirect = function(url, alt) {
+    ctx.redirect = function (url, alt) {
       let address = url;
 
       if (url === 'address') address = ctx.get('Referrer') || alt || '/';
 
-      const prevPrevPath = ctx.session.prevPrevPath || config.defaultPath;
-      const prevPath = ctx.session.prevPath || config.defaultPath;
-      const prevMethod = ctx.session.prevMethod || ctx.method;
+      const previousPreviousPath =
+        ctx.session.prevPrevPath || config.defaultPath;
+      const previousPath = ctx.session.prevPath || config.defaultPath;
+      const previousMethod = ctx.session.prevMethod || ctx.method;
       const maxRedirects = ctx.session.maxRedirects || 1;
 
-      if (prevPath && address === prevPath && ctx.method === prevMethod) {
+      if (
+        previousPath &&
+        address === previousPath &&
+        ctx.method === previousMethod
+      ) {
         if (
-          prevPrevPath &&
-          address !== prevPrevPath &&
+          previousPreviousPath &&
+          address !== previousPreviousPath &&
           maxRedirects <= config.maxRedirects
         ) {
-          address = prevPrevPath;
+          address = previousPreviousPath;
         } else {
           // if the prevPrevPath w/o querystring is !== prevPrevPath
           // then redirect then to prevPrevPath w/o querystring
-          const { pathname } = new Url(prevPrevPath, {});
-          if (pathname === prevPrevPath) address = '/';
+          const { pathname } = new Url(previousPreviousPath, {});
+          if (pathname === previousPreviousPath) address = '/';
           else address = pathname;
         }
       } else if (maxRedirects > config.maxRedirects) {

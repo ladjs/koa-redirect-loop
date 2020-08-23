@@ -27,19 +27,20 @@
   "devDependencies": {
     "@commitlint/cli": "latest",
     "@commitlint/config-conventional": "latest",
-    "@koa/router": "^8.0.5",
+    "@hapi/boom": "^9.1.0",
+    "@koa/router": "^9.4.0",
     "ava": "latest",
-    "cabin": "^5.0.13",
+    "cabin": "^8.0.7",
     "codecov": "latest",
     "cross-env": "latest",
     "eslint": "latest",
     "eslint-config-xo-lass": "latest",
-    "fetch-cookie": "^0.7.3",
+    "fetch-cookie": "^0.10.1",
     "fixpack": "latest",
     "husky": "latest",
-    "koa": "^2.11.0",
-    "koa-better-error-handler": "^3.0.3",
-    "koa-generic-session": "^2.0.3",
+    "koa": "^2.13.0",
+    "koa-better-error-handler": "^6.0.0",
+    "koa-generic-session": "^2.0.4",
     "lint-staged": "latest",
     "node-fetch": "^2.6.0",
     "nyc": "latest",
@@ -127,6 +128,9 @@
     "space": true,
     "extends": [
       "xo-lass"
-    ]
+    ],
+    "rules": {
+      "unicorn/prevent-abbreviations": "off"
+    }
   }
 }
