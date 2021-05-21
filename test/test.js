@@ -3,7 +3,7 @@ const Cabin = require('cabin');
 const Koa = require('koa');
 const Router = require('@koa/router');
 const errorHandler = require('koa-better-error-handler');
-const fetch = require('fetch-cookie/node-fetch')(require('node-fetch'));
+const supertest = require('supertest');
 const session = require('koa-generic-session');
 const test = require('ava');
 
@@ -12,6 +12,7 @@ const RedirectLoop = require('..');
 const redirectLoop = new RedirectLoop();
 const cabin = new Cabin();
 const cookiesKey = 'lad.sid';
+let request;
 
 test.beforeEach((t) => {
   const app = new Koa();
@@ -66,143 +67,82 @@ test.beforeEach((t) => {
   });
   app.use(router.routes());
   const server = app.listen();
-  t.context.url = `http://localhost:${server.address().port}/`;
+  t.context.url = `http://127.0.0.1:${server.address().port}/`;
+  request = supertest.agent(server);
 });
 
 test('caps at max of 5 redirects', async (t) => {
-  const res = await fetch(`${t.context.url}1`, {
-    credentials: 'include',
-    headers: { Accept: 'text/html' }
-  });
-  t.is(res.status, 200);
-  t.is(res.url, t.context.url);
-  t.pass();
+  const res = await request
+    .get(`/1`)
+    .set('Accept', 'text/html')
+    .redirects(10)
+    .expect(200);
+
+  t.is(res.redirects.pop(), t.context.url);
 });
 
 test('/beep => 200 => /boop => /beep', async (t) => {
-  let res = await fetch(`${t.context.url}beep`, {
-    credentials: 'include',
-    headers: { Accept: 'text/html' }
-  });
-  t.is(res.status, 200);
-  t.is(res.url, `${t.context.url}beep`);
-  res = await fetch(`${t.context.url}boop`, { credentials: 'include' });
-  t.is(res.status, 200);
-  t.is(res.url, `${t.context.url}beep`);
-  t.pass();
+  let res = await request.get(`/beep`).redirects().expect(200);
+  // since this shouldn't redirect there should be no redirects in res.redirects
+  t.is(res.redirects.length, 0);
+
+  res = await request.get(`/boop`).redirects().expect(200);
+  t.is(res.redirects.pop(), `${t.context.url}beep`);
 });
 
 test('/bar => /foo => /', async (t) => {
-  const res = await fetch(`${t.context.url}bar`, {
-    credentials: 'include',
-    headers: { Accept: 'text/html' }
-  });
-  t.is(res.status, 200);
-  t.is(res.url, t.context.url);
-  t.pass();
+  const res = await request.get(`/bar`).redirects().expect(200);
+  t.is(res.redirects.pop(), t.context.url);
 });
 
 test('/foo => /', async (t) => {
-  const res = await fetch(`${t.context.url}foo`, {
-    credentials: 'include',
-    headers: { Accept: 'text/html' }
-  });
-  t.is(res.status, 200);
-  t.is(res.url, t.context.url);
-  t.pass();
+  const res = await request.get(`/foo`).redirects().expect(200);
+  t.is(res.redirects.pop(), t.context.url);
 });
 
 test('/baz => /bar => /foo => /', async (t) => {
-  const res = await fetch(`${t.context.url}baz`, {
-    credentials: 'include',
-    headers: { Accept: 'text/html' }
-  });
-  t.is(res.status, 200);
-  t.is(res.url, t.context.url);
-  t.pass();
+  const res = await request.get(`/baz`).redirects().expect(200);
+  t.is(res.redirects.pop(), t.context.url);
 });
 
 test('prevents incorrect redirect to earlier path', async (t) => {
   // GET / -> GET /form -> POST /form -> GET /form
-  let res = await fetch(t.context.url, {
-    credentials: 'include',
-    headers: { Accept: 'text/html' }
-  });
-  t.is(res.status, 200);
-  t.is(res.url, t.context.url);
-  res = await fetch(`${t.context.url}form`, {
-    credentials: 'include',
-    headers: { Accept: 'text/html' }
-  });
-  t.is(res.status, 200);
-  t.is(res.url, `${t.context.url}form`);
-  res = await fetch(`${t.context.url}form`, {
-    method: 'POST',
-    credentials: 'include',
-    redirect: 'manual',
-    headers: { Accept: 'text/html' }
-  });
-  t.is(res.status, 302);
-  t.is(res.headers.get('location'), `${t.context.url}form`);
+  let res = await request.get('/').redirects().expect(200);
+  // since this shouldn't redirect there should be no redirects in res.redirects
+  t.is(res.redirects.length, 0);
+
+  res = await request.get(`/form`).redirects().expect(200);
+  // since this shouldn't redirect there should be no redirects in res.redirects
+  t.is(res.redirects.length, 0);
+
+  res = await request.post(`/form`).expect(302);
+  t.is(res.header.location, `/form`);
 
   // GET /form -> POST /form -> GET /form -> POST /form
-  res = await fetch(`${t.context.url}form`, {
-    credentials: 'include',
-    headers: { Accept: 'text/html' }
-  });
-  t.is(res.status, 200);
-  t.is(res.url, `${t.context.url}form`);
-  res = await fetch(`${t.context.url}form`, {
-    method: 'POST',
-    credentials: 'include',
-    redirect: 'manual',
-    headers: { Accept: 'text/html' }
-  });
-  t.is(res.status, 302);
-  t.is(res.headers.get('location'), `${t.context.url}form`);
-  res = await fetch(`${t.context.url}form`, {
-    credentials: 'include',
-    headers: { Accept: 'text/html' }
-  });
-  t.is(res.status, 200);
-  t.is(res.url, `${t.context.url}form`);
-  res = await fetch(`${t.context.url}form`, {
-    method: 'POST',
-    credentials: 'include',
-    redirect: 'manual',
-    headers: { Accept: 'text/html' }
-  });
-  t.is(res.status, 302);
-  t.is(res.headers.get('location'), `${t.context.url}form`);
+  res = await request.get(`/form`).redirects().expect(200);
+  // since this shouldn't redirect there should be no redirects in res.redirects
+  t.is(res.redirects.length, 0);
 
-  t.pass();
+  res = await request.post(`/form`).expect(302);
+  t.is(res.header.location, `/form`);
+
+  res = await request.get(`/form`).redirects().expect(200);
+  // since this shouldn't redirect there should be no redirects in res.redirects
+  t.is(res.redirects.length, 0);
+
+  res = await request.post(`/form`).expect(302);
+  t.is(res.header.location, `/form`);
 });
 
 test('router does not endless redirect when thrown bad request with referrer', async (t) => {
   const referrer = `${t.context.url}error`;
-  const res = await fetch(referrer, {
-    credentials: 'include',
-    redirect: 'manual',
-    headers: {
-      Referrer: referrer,
-      Accept: 'text/html'
-    }
-  });
-  t.is(res.headers.get('location'), referrer);
-  t.is(res.status, 302);
+  const res = await request.get('/error').set('Referrer', referrer).expect(400);
+  t.is(res.redirects.length, 0);
 });
 
 test('router does not endless redirect when thrown bad request without referrer', async (t) => {
-  const referrer = `${t.context.url}error`;
-  const res = await fetch(referrer, {
-    credentials: 'include',
-    redirect: 'manual',
-    headers: {
-      Accept: 'text/html'
-    }
-  });
-  t.is(res.status, 400);
-  t.is(res.url, referrer);
+  const res = await request.get('/error').expect(400);
+  t.is(res.redirects.length, 0);
 });
 
 /*
@@ -216,11 +156,6 @@ Error [ERR_HTTP_HEADERS_SENT]: Cannot set headers after they are sent to the cli
     at /Users/foo/Projects/forwardemail.net/node_modules/koa-generic-session/lib/session.js:3:361
 */
 test('does not throw ERR_HTTP_HEADERS_SENT', async (t) => {
-  const res = await fetch(`${t.context.url}headers`, {
-    credentials: 'include',
-    headers: {
-      Accept: 'text/html'
-    }
-  });
+  const res = await request.get(`/headers`);
   t.is(res.status, 404);
 });

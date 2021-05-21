@@ -35,17 +35,16 @@
     "cross-env": "^7.0.3",
     "eslint": "^7.26.0",
     "eslint-config-xo-lass": "^1.0.5",
-    "fetch-cookie": "^0.11.0",
     "fixpack": "^4.0.0",
     "husky": "^4.2.5",
     "koa": "^2.13.0",
     "koa-better-error-handler": "^7.0.1",
     "koa-generic-session": "^2.0.4",
     "lint-staged": "^11.0.0",
-    "node-fetch": "^2.6.0",
     "nyc": "latest",
     "remark-cli": "^9.0.0",
     "remark-preset-github": "^4.0.1",
+    "supertest": "^6.1.3",
     "xo": "^0.40.1"
   },
   "engines": {
