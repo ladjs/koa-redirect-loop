@@ -85,8 +85,7 @@ class RedirectLoop {
           // if the prevPrevPath w/o querystring is !== prevPrevPath
           // then redirect then to prevPrevPath w/o querystring
           const { pathname } = new Url(previousPreviousPath, {});
-          if (pathname === previousPreviousPath) address = '/';
-          else address = pathname;
+          address = pathname === previousPreviousPath ? '/' : pathname;
         }
       } else if (maxRedirects > config.maxRedirects) {
         address = config.defaultPath;

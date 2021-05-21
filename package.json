@@ -25,28 +25,28 @@
     "url-parse": "^1.4.7"
   },
   "devDependencies": {
-    "@commitlint/cli": "latest",
-    "@commitlint/config-conventional": "latest",
+    "@commitlint/cli": "^12.1.4",
+    "@commitlint/config-conventional": "^12.1.4",
     "@hapi/boom": "^9.1.0",
-    "@koa/router": "^9.4.0",
-    "ava": "latest",
-    "cabin": "^8.0.7",
-    "codecov": "latest",
-    "cross-env": "latest",
-    "eslint": "latest",
-    "eslint-config-xo-lass": "latest",
-    "fetch-cookie": "^0.10.1",
-    "fixpack": "latest",
-    "husky": "latest",
+    "@koa/router": "^10.0.0",
+    "ava": "^3.15.0",
+    "cabin": "^9.0.4",
+    "codecov": "^3.8.2",
+    "cross-env": "^7.0.3",
+    "eslint": "^7.26.0",
+    "eslint-config-xo-lass": "^1.0.5",
+    "fetch-cookie": "^0.11.0",
+    "fixpack": "^4.0.0",
+    "husky": "^4.2.5",
     "koa": "^2.13.0",
-    "koa-better-error-handler": "^6.0.1",
+    "koa-better-error-handler": "^7.0.1",
     "koa-generic-session": "^2.0.4",
-    "lint-staged": "latest",
+    "lint-staged": "^11.0.0",
     "node-fetch": "^2.6.0",
     "nyc": "latest",
-    "remark-cli": "latest",
-    "remark-preset-github": "latest",
-    "xo": "latest"
+    "remark-cli": "^9.0.0",
+    "remark-preset-github": "^4.0.1",
+    "xo": "^0.40.1"
   },
   "engines": {
     "node": ">=8.3"
@@ -130,7 +130,8 @@
       "xo-lass"
     ],
     "rules": {
-      "unicorn/prevent-abbreviations": "off"
+      "unicorn/prevent-abbreviations": "off",
+      "unicorn/prefer-module": "off"
     }
   }
 }
