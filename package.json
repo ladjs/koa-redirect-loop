@@ -39,6 +39,7 @@
     "husky": "^4.2.5",
     "koa": "^2.13.0",
     "koa-better-error-handler": "^7.0.1",
+    "koa-compress": "^5.0.1",
     "koa-generic-session": "^2.0.4",
     "lint-staged": "^11.0.0",
     "nyc": "latest",
@@ -48,7 +49,7 @@
     "xo": "^0.40.1"
   },
   "engines": {
-    "node": ">=8.3"
+    "node": ">=10.10.0"
   },
   "homepage": "https://github.com/niftylettuce/koa-redirect-loop",
   "husky": {
