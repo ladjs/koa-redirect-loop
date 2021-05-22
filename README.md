@@ -76,7 +76,7 @@ app.use(redirectLoop.middleware);
 [MIT](LICENSE) © [Nick Baugh](http://niftylettuce.com/)
 
 
-## 
+##
 
 [npm]: https://www.npmjs.com/
 
