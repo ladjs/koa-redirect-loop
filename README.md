@@ -1,6 +1,6 @@
 # koa-redirect-loop
 
-[![build status](https://img.shields.io/travis/com/ladjs/koa-redirect-loop.svg)](https://travis-ci.com/ladjs/koa-redirect-loop)
+[![build status](https://img.shields.io/travis/com/ladjs/koa-redirect-loop.svg)](https://app.travis-ci.com/github/ladjs/koa-redirect-loop)
 [![code coverage](https://img.shields.io/codecov/c/github/ladjs/koa-redirect-loop.svg)](https://codecov.io/gh/ladjs/koa-redirect-loop)
 [![code style](https://img.shields.io/badge/code_style-XO-5ed9c7.svg)](https://github.com/sindresorhus/xo)
 [![styled with prettier](https://img.shields.io/badge/styled_with-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
