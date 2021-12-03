@@ -1,14 +1,14 @@
 # koa-redirect-loop
 
-[![build status](https://img.shields.io/travis/com/niftylettuce/koa-redirect-loop.svg)](https://travis-ci.com/niftylettuce/koa-redirect-loop)
-[![code coverage](https://img.shields.io/codecov/c/github/niftylettuce/koa-redirect-loop.svg)](https://codecov.io/gh/niftylettuce/koa-redirect-loop)
+[![build status](https://img.shields.io/travis/com/ladjs/koa-redirect-loop.svg)](https://travis-ci.com/ladjs/koa-redirect-loop)
+[![code coverage](https://img.shields.io/codecov/c/github/ladjs/koa-redirect-loop.svg)](https://codecov.io/gh/ladjs/koa-redirect-loop)
 [![code style](https://img.shields.io/badge/code_style-XO-5ed9c7.svg)](https://github.com/sindresorhus/xo)
 [![styled with prettier](https://img.shields.io/badge/styled_with-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
 [![made with lass](https://img.shields.io/badge/made_with-lass-95CC28.svg)](https://lass.js.org)
-[![license](https://img.shields.io/github/license/niftylettuce/koa-redirect-loop.svg)](LICENSE)
+[![license](https://img.shields.io/github/license/ladjs/koa-redirect-loop.svg)](LICENSE)
 [![npm downloads](https://img.shields.io/npm/dt/koa-redirect-loop.svg)](https://npm.im/koa-redirect-loop)
 
-> Prevent redirect loops with sessions since HTTP referrer header is unreliable
+> Prevent redirect loops with sessions since HTTP referrer header is unreliable and ensures sessions are saved upon redirect
 
 > Note that this package only supports `koa-generic-session`, since other packages do not expose a save method used in `res.end` override.
 

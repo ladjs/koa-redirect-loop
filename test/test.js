@@ -6,12 +6,20 @@ const errorHandler = require('koa-better-error-handler');
 const supertest = require('supertest');
 const session = require('koa-generic-session');
 const test = require('ava');
+const StateHelper = require('@ladjs/state-helper');
+const redisStore = require('koa-redis');
+const Redis = require('@ladjs/redis');
+const flash = require('koa-better-flash');
+const cryptoRandomString = require('crypto-random-string');
 
 const RedirectLoop = require('..');
 
 const redirectLoop = new RedirectLoop();
 const cabin = new Cabin();
 const cookiesKey = 'lad.sid';
+// initialize redis
+const client = new Redis({}, cabin);
+
 let request;
 
 test.beforeEach((t) => {
@@ -20,9 +28,11 @@ test.beforeEach((t) => {
   // override koa's undocumented error handler
   app.context.onerror = errorHandler(cookiesKey);
   const router = new Router();
-  app.keys = ['lad'];
+  // session store
+  app.keys = ['koa-redirect-loop'];
   app.use(
     session({
+      store: redisStore({ client }),
       key: cookiesKey,
       cookie: {
         httpOnly: true,
@@ -31,11 +41,19 @@ test.beforeEach((t) => {
         signed: true,
         maxAge: 24 * 60 * 60 * 1000,
         sameSite: 'lax'
-      }
+      },
+      genSid: () => cryptoRandomString.async({ length: 32 })
     })
   );
   app.use(cabin.middleware);
+
+  // add dynamic view helpers
+  const stateHelper = new StateHelper();
+  app.use(stateHelper.middleware);
   app.use(redirectLoop.middleware);
+  // flash messages (must come after sessions added and flash)
+  app.use(flash());
+
   router.get('/', (ctx) => {
     ctx.status = 200;
   });
@@ -65,6 +83,25 @@ test.beforeEach((t) => {
     ctx.res.end();
     ctx.throw(Boom.badRequest('Uh oh'));
   });
+
+  router.get('/redirect-start', async (ctx) => {
+    ctx.flash('success', 'yay!');
+    ctx.redirect('/redirect-end');
+  });
+
+  router.get('/redirect-end', async (ctx) => {
+    ctx.body = ctx.state.flash();
+  });
+
+  router.get('/throw-start', async (ctx) => {
+    ctx.flash('success', 'oops!');
+    ctx.throw(500);
+  });
+
+  router.get('/throw-end', async (ctx) => {
+    ctx.body = ctx.state.flash();
+  });
+
   app.use(router.routes());
   const server = app.listen();
   t.context.url = `http://127.0.0.1:${server.address().port}/`;
@@ -158,4 +195,17 @@ Error [ERR_HTTP_HEADERS_SENT]: Cannot set headers after they are sent to the cli
 test('does not throw ERR_HTTP_HEADERS_SENT', async (t) => {
   const res = await request.get(`/headers`);
   t.is(res.status, 404);
+});
+
+// works with flash messages (preserves them upon redirect and throw)
+test('preserves flash messages on redirect', async (t) => {
+  const res = await request.get('/redirect-start').redirects(1);
+  t.log(res.body);
+  t.deepEqual(res.body, { success: ['yay!'] });
+});
+test('preserves flash messages on throw', async (t) => {
+  const res = await request.get('/throw-start');
+  t.is(res.status, 500);
+  const { body } = await request.get('/throw-end');
+  t.deepEqual(body, { success: ['oops!'] });
 });
