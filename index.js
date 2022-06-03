@@ -32,7 +32,17 @@ class RedirectLoop {
     ctx.redirect = function (url, alt) {
       let address = url;
 
-      if (url === 'address') address = ctx.get('Referrer') || alt || '/';
+      if (url === 'back') {
+        //
+        // NOTE: we can only use the Referrer if they're from the same site
+        //
+        address =
+          ctx.get('Referrer') &&
+          new Url(ctx.get('Referrer'), {}).origin ===
+            new Url(ctx.href, {}).origin
+            ? new Url(ctx.get('Referrer'), {}).pathname || '/'
+            : alt || '/';
+      }
 
       const previousPreviousPath =
         ctx.session.prevPrevPath || config.defaultPath;
@@ -55,7 +65,7 @@ class RedirectLoop {
           // if the prevPrevPath w/o querystring is !== prevPrevPath
           // then redirect then to prevPrevPath w/o querystring
           const { pathname } = new Url(previousPreviousPath, {});
-          address = pathname === previousPreviousPath ? '/' : pathname;
+          address = pathname === previousPreviousPath ? '/' : pathname || '/';
         }
       } else if (maxRedirects > config.maxRedirects) {
         address = config.defaultPath;
@@ -64,10 +74,17 @@ class RedirectLoop {
       redirect.call(this, address, alt);
     };
 
-    await next();
+    let error;
+    try {
+      await next();
+    } catch (err) {
+      error = err;
+    }
 
+    //
     // instead of `!req.xhr` we need to use !accepts HTML
     // because Fetch does not provide XMLHttpRequest
+    //
     if (ctx.accepts('html')) {
       ctx.session.prevPrevPath = ctx.session.prevPath;
       ctx.session.prevPath = ctx.originalUrl;
@@ -82,7 +99,13 @@ class RedirectLoop {
       else ctx.session.maxRedirects = 0;
     }
 
-    await ctx.saveSession();
+    try {
+      await ctx.saveSession();
+    } catch (err) {
+      this.config.error(err);
+    }
+
+    if (error) throw error;
   }
 }
 

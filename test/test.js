@@ -1,24 +1,23 @@
 const Boom = require('@hapi/boom');
 const Cabin = require('cabin');
 const Koa = require('koa');
+const Redis = require('ioredis-mock');
 const Router = require('@koa/router');
-const errorHandler = require('koa-better-error-handler');
-const supertest = require('supertest');
-const session = require('koa-generic-session');
-const test = require('ava');
 const StateHelper = require('@ladjs/state-helper');
-const redisStore = require('koa-redis');
-const Redis = require('@ladjs/redis');
-const flash = require('koa-better-flash');
 const cryptoRandomString = require('crypto-random-string');
+const errorHandler = require('koa-better-error-handler');
+const flash = require('koa-better-flash');
+const redisStore = require('koa-redis');
+const session = require('koa-generic-session');
+const supertest = require('supertest');
+const test = require('ava');
 
 const RedirectLoop = require('..');
 
 const redirectLoop = new RedirectLoop();
 const cabin = new Cabin();
+const client = new Redis();
 const cookiesKey = 'lad.sid';
-// initialize redis
-const client = new Redis({}, cabin);
 
 let request;
 
@@ -206,6 +205,8 @@ test('preserves flash messages on redirect', async (t) => {
 test('preserves flash messages on throw', async (t) => {
   const res = await request.get('/throw-start');
   t.is(res.status, 500);
+  const res2 = await request.get('/throw-start');
+  t.is(res2.status, 500);
   const { body } = await request.get('/throw-end');
   t.deepEqual(body, { success: ['oops!'] });
 });

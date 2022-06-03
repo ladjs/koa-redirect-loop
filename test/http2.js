@@ -39,19 +39,19 @@ let request;
 
 test.beforeEach((t) => {
   t.context.logger = {
-    error: (err) => {
+    error(err) {
       console.log(err.code);
     },
-    info: (msg) => {
+    info(msg) {
       console.info(msg);
     },
-    debug: (msg) => {
+    debug(msg) {
       console.debug(msg);
     },
-    trace: (msg) => {
+    trace(msg) {
       console.trace(msg);
     },
-    warn: (msg) => {
+    warn(msg) {
       console.warn(msg);
     }
   };
