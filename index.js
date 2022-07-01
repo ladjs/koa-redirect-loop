@@ -21,11 +21,23 @@ class RedirectLoop {
   }
 
   async middleware(ctx, next) {
-    if (!ctx.session) throw new Error('Sessions required');
-    if (typeof ctx.saveSession !== 'function')
-      throw new Error(
-        'Please use koa-generic-session v2.0.3+ which exposes a `ctx.saveSession()` method'
+    if (!ctx.session) {
+      config.logger.error(
+        new Error(
+          'ctx.session missing, sessions required for koa-redirect-loop'
+        )
       );
+      return next();
+    }
+
+    if (typeof ctx.saveSession !== 'function') {
+      config.logger.error(
+        new Error(
+          'Please use koa-generic-session v2.0.3+ which exposes a `ctx.saveSession()` method'
+        )
+      );
+      return next();
+    }
 
     const { config } = this;
     const { redirect } = ctx;
