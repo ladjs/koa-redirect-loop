@@ -21,6 +21,9 @@ class RedirectLoop {
   }
 
   async middleware(ctx, next) {
+    const { config } = this;
+    const { redirect } = ctx;
+
     if (!ctx.session) {
       config.logger.error(
         new Error(
@@ -38,9 +41,6 @@ class RedirectLoop {
       );
       return next();
     }
-
-    const { config } = this;
-    const { redirect } = ctx;
 
     ctx.redirect = function (url, alt) {
       let address = url;
