@@ -55,6 +55,7 @@ app.use(redirectLoop.middleware);
 
 * `defaultPath` (String) - path to fallback to, defaults to `'/'`
 * `maxRedirects` (Number) - maximum number of redirects to allow, defaults to `5`
+* `console` (Object) - a logger instance, defaults to `console`
 
 
 ## Contributors
