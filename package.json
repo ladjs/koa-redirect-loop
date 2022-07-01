@@ -1,7 +1,7 @@
 {
   "name": "koa-redirect-loop",
   "description": "Prevent redirect loops with sessions since HTTP referrer header is unreliable and ensures sessions are saved upon redirect",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "author": "Nick Baugh <niftylettuce@gmail.com> (http://niftylettuce.com/)",
   "ava": {
     "serial": true,
@@ -20,21 +20,20 @@
     "url-parse": "^1.5.10"
   },
   "devDependencies": {
-    "@commitlint/cli": "^17.0.2",
-    "@commitlint/config-conventional": "^17.0.2",
+    "@commitlint/cli": "^17.0.3",
+    "@commitlint/config-conventional": "^17.0.3",
     "@hapi/boom": "^10.0.0",
     "@koa/router": "^10.1.1",
     "@ladjs/state-helper": "^1.0.0",
     "ava": "^4.3.0",
     "cabin": "^9.1.2",
-    "codecov": "^3.8.3",
     "cross-env": "^7.0.3",
     "crypto-random-string": "3",
-    "eslint": "^8.16.0",
-    "eslint-config-xo-lass": "^1.0.6",
+    "eslint": "^8.18.0",
+    "eslint-config-xo-lass": "^2.0.1",
     "fixpack": "^4.0.0",
     "husky": "^8.0.1",
-    "ioredis": "^5.0.6",
+    "ioredis": "^5.1.0",
     "ioredis-mock": "^8.2.2",
     "koa": "^2.13.4",
     "koa-better-error-handler": "^9.0.0",
@@ -42,12 +41,12 @@
     "koa-compress": "^5.1.0",
     "koa-generic-session": "^2.3.0",
     "koa-redis": "^4.0.1",
-    "lint-staged": "^13.0.0",
+    "lint-staged": "^13.0.3",
     "nyc": "latest",
-    "remark-cli": "^10.0.1",
-    "remark-preset-github": "^4.0.2",
+    "remark-cli": "^11.0.0",
+    "remark-preset-github": "^4.0.4",
     "supertest": "^6.2.3",
-    "xo": "^0.49.0"
+    "xo": "^0.50.0"
   },
   "engines": {
     "node": ">=14"
@@ -90,10 +89,9 @@
     "url": "https://github.com/ladjs/koa-redirect-loop"
   },
   "scripts": {
-    "coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
-    "lint": "xo && remark . -qfo",
+    "lint": "xo --fix && remark . -qfo && fixpack",
     "prepare": "husky install",
-    "test": "npm run lint && npm run test-coverage",
-    "test-coverage": "cross-env NODE_ENV=test nyc ava"
+    "pretest": "npm run lint",
+    "test": "cross-env NODE_ENV=test nyc ava"
   }
 }
