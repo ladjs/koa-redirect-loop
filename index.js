@@ -20,7 +20,7 @@ class RedirectLoop {
   }
 
   async middleware(ctx, next) {
-    if (!ctx.session) return ctx.throw(new Error('Sessions required'));
+    if (!ctx.session) throw new Error('Sessions required');
     if (typeof ctx.saveSession !== 'function')
       throw new Error(
         'Please use koa-generic-session v2.0.3+ which exposes a `ctx.saveSession()` method'
@@ -102,7 +102,8 @@ class RedirectLoop {
     try {
       await ctx.saveSession();
     } catch (err) {
-      this.config.error(err);
+      // this indicates an issue with redis most likely
+      this.config.logger.fatal(err);
     }
 
     if (error) throw error;
