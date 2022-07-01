@@ -9,6 +9,7 @@ class RedirectLoop {
       logger: console,
       ...config
     };
+
     if (!isSANB(this.config.defaultPath))
       throw new Error('defaultPath must be a String');
     if (
@@ -103,7 +104,7 @@ class RedirectLoop {
       await ctx.saveSession();
     } catch (err) {
       // this indicates an issue with redis most likely
-      this.config.logger.fatal(err);
+      config.logger.error(err);
     }
 
     if (error) throw error;
