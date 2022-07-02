@@ -4,19 +4,22 @@ const isSANB = require('is-string-and-not-blank');
 class RedirectLoop {
   constructor(config) {
     this.config = {
-      defaultPath: '/',
+      getDefaultPath: (ctx) =>
+        ctx.request.locale ? `/${ctx.request.locale}` : '/',
       maxRedirects: 5,
       logger: console,
       ...config
     };
 
-    if (!isSANB(this.config.defaultPath))
-      throw new Error('defaultPath must be a String');
+    if (isSANB(this.config.defaultPath))
+      this.config.getDefaultPath = () => this.config.defaultPath;
+
     if (
       typeof this.config.maxRedirects !== 'number' ||
       this.config.maxRedirects <= 0
     )
       throw new Error('maxRedirects must be a Number greater than zero');
+
     this.middleware = this.middleware.bind(this);
   }
 
@@ -45,6 +48,8 @@ class RedirectLoop {
     ctx.redirect = function (url, alt) {
       let address = url;
 
+      const defaultPath = config.getDefaultPath(ctx);
+
       if (url === 'back') {
         //
         // NOTE: we can only use the Referrer if they're from the same site
@@ -53,13 +58,12 @@ class RedirectLoop {
           ctx.get('Referrer') &&
           new Url(ctx.get('Referrer'), {}).origin ===
             new Url(ctx.href, {}).origin
-            ? new Url(ctx.get('Referrer'), {}).pathname || '/'
-            : alt || '/';
+            ? new Url(ctx.get('Referrer'), {}).pathname || defaultPath
+            : alt || defaultPath;
       }
 
-      const previousPreviousPath =
-        ctx.session.prevPrevPath || config.defaultPath;
-      const previousPath = ctx.session.prevPath || config.defaultPath;
+      const previousPreviousPath = ctx.session.prevPrevPath || defaultPath;
+      const previousPath = ctx.session.prevPath || defaultPath;
       const previousMethod = ctx.session.prevMethod || ctx.method;
       const maxRedirects = ctx.session.maxRedirects || 1;
 
@@ -78,10 +82,13 @@ class RedirectLoop {
           // if the prevPrevPath w/o querystring is !== prevPrevPath
           // then redirect then to prevPrevPath w/o querystring
           const { pathname } = new Url(previousPreviousPath, {});
-          address = pathname === previousPreviousPath ? '/' : pathname || '/';
+          address =
+            pathname === previousPreviousPath
+              ? defaultPath
+              : pathname || defaultPath;
         }
       } else if (maxRedirects > config.maxRedirects) {
-        address = config.defaultPath;
+        address = defaultPath;
       }
 
       redirect.call(this, address, alt);

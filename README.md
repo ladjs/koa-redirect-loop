@@ -53,6 +53,7 @@ app.use(redirectLoop.middleware);
 
 ## Options
 
+* `getDefaultPath` (Function) - function which accepts `ctx` argument and returns a path to fallback to, defaults to either `/${ctx.request.locale}` (e.g. if using `@ladjs/i18n`) or `/`
 * `defaultPath` (String) - path to fallback to, defaults to `'/'`
 * `maxRedirects` (Number) - maximum number of redirects to allow, defaults to `5`
 * `console` (Object) - a logger instance, defaults to `console`
