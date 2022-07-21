@@ -62,7 +62,7 @@ class RedirectLoop {
             : alt || defaultPath;
       }
 
-      const previousPreviousPath = ctx.session.prevPrevPath || defaultPath;
+      const previousPreviousPath = ctx.session.prevPrevPath;
       const previousPath = ctx.session.prevPath || defaultPath;
       const previousMethod = ctx.session.prevMethod || ctx.method;
       const maxRedirects = ctx.session.maxRedirects || 1;
@@ -70,10 +70,10 @@ class RedirectLoop {
       if (
         previousPath &&
         address === previousPath &&
-        ctx.method === previousMethod
+        ctx.method === previousMethod &&
+        previousPreviousPath
       ) {
         if (
-          previousPreviousPath &&
           address !== previousPreviousPath &&
           maxRedirects <= config.maxRedirects
         ) {
@@ -106,7 +106,9 @@ class RedirectLoop {
     // because Fetch does not provide XMLHttpRequest
     //
     if (ctx.accepts('html')) {
-      ctx.session.prevPrevPath = ctx.session.prevPath;
+      // if it was successful then unset prevPrevPath
+      if (ctx.res.statusCode === 200) delete ctx.session.prevPrevPath;
+      else ctx.session.prevPrevPath = ctx.session.prevPath;
       ctx.session.prevPath = ctx.originalUrl;
       ctx.session.prevMethod = ctx.method;
       // if it was a redirect then store how many times
